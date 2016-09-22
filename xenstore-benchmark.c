@@ -27,7 +27,8 @@ typedef struct config_s
 	int xs_set_permission;
 	int repeat;
 	int req_size;
-    int connection_num;
+	int connection_num;
+	int print_config;
 } config;
 
 int bench_write(int n, int size, double *result);
@@ -66,7 +67,6 @@ int main(int argc, char **argv)
 		default_config(&cfg);
 		if(parse_config_file(argv[1], &cfg))
 			return -2;
-		print_config(&cfg);
 	}
 	else
 	{
@@ -74,8 +74,11 @@ int main(int argc, char **argv)
 		return -1;
 	}
     
+    if(cfg.print_config)
+	print_config(&cfg);    
+
     pid_list = (pid_t *)malloc(cfg.connection_num * sizeof(pid_t));
-	time_res = (double *)malloc(cfg.repeat * sizeof(double));
+    time_res = (double *)malloc(cfg.repeat * sizeof(double));
 
     spawn_connections(cfg.connection_num);
 
@@ -206,7 +209,7 @@ void print_usage(int argc, char **argv)
 void default_config(config *cfg)
 {
 	cfg->connection_num = 0;
-    cfg->xs_read = 0;
+    	cfg->xs_read = 0;
 	cfg->xs_write = 0;
 	cfg->xs_open = 0;
 	cfg->xs_close = 0;
@@ -215,6 +218,7 @@ void default_config(config *cfg)
 
 	cfg->repeat = 1;
 	cfg->req_size = 32;
+	cfg->print_config = 1;
 }
 
 void print_config(const config *cfg)
@@ -222,7 +226,7 @@ void print_config(const config *cfg)
 	printf("Configuration:\n");
 	printf("--------------\n");
 	printf("connection_num: %d\n", cfg->connection_num);
-    printf("xs_read: %d\n", cfg->xs_read);
+	printf("xs_read: %d\n", cfg->xs_read);
 	printf("xs_write: %d\n", cfg->xs_write);
 	printf("xs_open: %d\n", cfg->xs_open);
 	printf("xs_close: %d\n", cfg->xs_close);
@@ -272,6 +276,8 @@ int parse_config_file(char *path, config *cfg)
 			cfg->repeat = atoi(line + strlen("repeat "));
 		else if(!strncmp(line, "req_size ", strlen("req_size ")))
 			cfg->req_size = atoi(line + strlen("req_size "));
+		else if(!strncmp(line, "print_config ", strlen("print_config ")))
+			cfg->print_config = atoi(line + strlen("print_config "));
         else if(!strncmp(line, "connection_num ", strlen("connection_num ")))
             cfg->connection_num = atoi(line + strlen("connection_num "));
 		else
