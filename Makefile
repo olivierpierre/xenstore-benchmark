@@ -7,3 +7,6 @@ all: $(PROG)
 
 $(PROG): $(PROG).c
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+
+clean:
+	rm -rf $(PROG)

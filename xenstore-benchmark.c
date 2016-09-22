@@ -83,7 +83,7 @@ int main(int argc, char **argv)
     spawn_connections(cfg.connection_num);
 
     for(i=0; i<cfg.connection_num; i++)
-        usleep(100000);
+        usleep(5000);
 
 	if(cfg.xs_open)
 	{
@@ -718,7 +718,7 @@ void connection_loop(int child_id)
         should_stop = child_stop;    
         if(should_stop)
             break;
-
+	
         sleep(1);
     }
 
